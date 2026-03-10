@@ -93,19 +93,67 @@ function scrollActive() {
     const sectionHeight = current.offsetHeight,
       sectionTop = current.offsetTop - 58,
       sectionId = current.getAttribute("id");
+    const navLink = document.querySelector(
+      ".nav__menu a[href*=" + sectionId + "]"
+    );
+
+    if (!navLink) return;
 
     if (scrollY > sectionTop && scrollY <= sectionTop + sectionHeight) {
-      document
-        .querySelector(".nav__menu a[href*=" + sectionId + "]")
-        .classList.add("active-link");
+      navLink.classList.add("active-link");
     } else {
-      document
-        .querySelector(".nav__menu a[href*=" + sectionId + "]")
-        .classList.remove("active-link");
+      navLink.classList.remove("active-link");
     }
   });
 }
 window.addEventListener("scroll", scrollActive);
+
+/*=============== DESKTOP EXPERIENCE POPUP ===============*/
+const experiencePopup = document.getElementById("experience-popup");
+const experiencePopupClose = document.getElementById("experience-popup-close");
+const experiencePopupStay = document.getElementById("experience-popup-stay");
+const experiencePopupGo = document.getElementById("experience-popup-go");
+const desktopPopupKey = "desktop-3d-experience-popup-seen";
+const isDesktopViewport = () => window.matchMedia("(min-width: 768px)").matches;
+
+function closeExperiencePopup() {
+  if (!experiencePopup) return;
+
+  experiencePopup.classList.remove("active-popup");
+  experiencePopup.setAttribute("aria-hidden", "true");
+}
+
+function dismissExperiencePopup() {
+  localStorage.setItem(desktopPopupKey, "true");
+  closeExperiencePopup();
+}
+
+if (experiencePopup && isDesktopViewport() && !localStorage.getItem(desktopPopupKey)) {
+  experiencePopup.classList.add("active-popup");
+  experiencePopup.setAttribute("aria-hidden", "false");
+}
+
+if (experiencePopupClose) {
+  experiencePopupClose.addEventListener("click", dismissExperiencePopup);
+}
+
+if (experiencePopupStay) {
+  experiencePopupStay.addEventListener("click", dismissExperiencePopup);
+}
+
+if (experiencePopupGo) {
+  experiencePopupGo.addEventListener("click", () => {
+    localStorage.setItem(desktopPopupKey, "true");
+  });
+}
+
+if (experiencePopup) {
+  experiencePopup.addEventListener("click", (event) => {
+    if (event.target === experiencePopup) {
+      dismissExperiencePopup();
+    }
+  });
+}
 
 /*=============== LIGHT DARK THEME ===============*/
 const themeButton = document.getElementById("theme-button");
@@ -184,6 +232,13 @@ sr.reveal(`.about__data, .about__description, .about__button-contact`, {
 });
 
 sr.reveal(`.skills__content`, {
+  delay: 100,
+  scale: 0.9,
+  origin: "bottom",
+  distance: "30px",
+});
+
+sr.reveal(`.experience__card, .education__card`, {
   delay: 100,
   scale: 0.9,
   origin: "bottom",
